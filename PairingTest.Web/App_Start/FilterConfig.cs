@@ -1,6 +1,7 @@
-﻿using System.Web.Mvc;
+﻿using System.Web;
+using System.Web.Mvc;
 
-namespace PairingTest.Web.App_Start
+namespace PairingTest.Web
 {
     public class FilterConfig
     {
