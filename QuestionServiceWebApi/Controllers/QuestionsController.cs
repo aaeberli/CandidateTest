@@ -1,46 +1,68 @@
 ﻿using System.Web.Http;
 using QuestionServiceWebApi.Interfaces;
+using PairingTest.Domain.Model;
+using PairingTest.Data.DTO;
+using AutoMapper;
+using System;
+using PairingTest.Common.Abstract;
 
 namespace QuestionServiceWebApi.Controllers
 {
     public class QuestionsController : ApiController
     {
         private readonly IQuestionRepository _questionRepository;
+        private readonly ILogger _logger;
 
-        public QuestionsController(IQuestionRepository questionRepository)
+        /// <summary>
+        /// Constructor is injected with correct objects by Unity
+        /// </summary>
+        /// <param name="questionRepository"></param>
+        /// <param name="logger"></param>
+        public QuestionsController(IQuestionRepository questionRepository, ILogger logger)
         {
+            if (questionRepository == null) throw new NullReferenceException("IQuestionRepository not implemented");
+            if (logger == null) throw new NullReferenceException("ILogger not implemented");
             _questionRepository = questionRepository;
+            _logger = logger;
         }
 
-        public QuestionsController() : this(new QuestionRepository())
+        /// <summary>
+        /// Gets the whole questionnaire
+        /// </summary>
+        /// <returns></returns>
+        public QuestionnaireDTO Get()
         {
+            try
+            {
+                Questionnaire quest = _questionRepository.GetQuestionnaire();
+                return Mapper.Map<Questionnaire, QuestionnaireDTO>(quest);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex);
+                return null;
+            }
         }
 
-        // GET api/questions
-        public Questionnaire Get()
+        /// <summary>
+        /// Submits the whole compiled questionnaire
+        /// </summary>
+        /// <param name="compiledQuestionnaire"></param>
+        /// <returns></returns>
+        public bool Post(QuestionnaireDTO compiledQuestionnaire)
         {
-            return _questionRepository.GetQuestionnaire();
+            try
+            {
+                Questionnaire quest = Mapper.Map<QuestionnaireDTO, Questionnaire>(compiledQuestionnaire);
+                return _questionRepository.SubmitQuestionnaire(quest);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex);
+                return false;
+            }
+
         }
 
-        // GET api/questions/5
-        public string Get(int id)
-        {
-            return "";
-        }
-
-        // POST api/questions
-        public void Post([FromBody]string value)
-        {
-        }
-
-        // PUT api/questions/5
-        public void Put(int id, [FromBody]string value)
-        {
-        }
-
-        // DELETE api/questions/5
-        public void Delete(int id)
-        {
-        }
     }
 }
