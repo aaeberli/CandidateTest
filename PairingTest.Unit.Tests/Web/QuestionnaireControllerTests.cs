@@ -6,9 +6,14 @@ using System.Net.Http;
 using AutoMapper;
 using PairingTest.Data.DTO;
 using System.Collections.Generic;
+using Microsoft.VisualStudio.TestTools.UnitTesting.Web;
 
 namespace PairingTest.Unit.Tests.Web
 {
+    /// <summary>
+    /// These tests can run successfully only if QuestionServiceWebApi is running
+    /// To do so configure it as startup project and execute CTRL+F5 to run without debugging
+    /// </summary>
     [TestClass]
     public class QuestionnaireControllerTests
     {
@@ -43,7 +48,7 @@ namespace PairingTest.Unit.Tests.Web
         {
             //Arrange
             var questionnaireController = new QuestionnaireController(new QuestionServiceClient(new HttpClientHandler()));
-            QuestionnaireViewModel vm= new QuestionnaireViewModel
+            QuestionnaireViewModel vm = new QuestionnaireViewModel
             {
                 Id = 1,
                 QuestionnaireTitle = "Geography Questions",
